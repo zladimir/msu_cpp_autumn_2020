@@ -31,8 +31,8 @@ char *Allocator::alloc(size_t size)
 {
 	if (size <= available_size_) {
 		char *tmp = offset_;
-			offset_ += size;
-			available_size_ -= size;
+		offset_ += size;
+		available_size_ -= size;
 		return tmp;
 	} else {
 		return nullptr;
