@@ -7,7 +7,7 @@ class Allocator
 public:
 	Allocator();
 	void makeAllocator(size_t maxSize);
-	har* alloc(size_t size);
+	char* alloc(size_t size);
 	void reset();
 	~Allocator();
 };
