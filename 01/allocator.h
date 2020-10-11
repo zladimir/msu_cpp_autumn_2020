@@ -6,8 +6,8 @@ class Allocator
 	char *memory_begin_, *offset_;
 public:
 	Allocator();
-    void makeAllocator(size_t maxSize);
-    char* alloc(size_t size);
-    void reset();
-    ~Allocator();
+	void makeAllocator(size_t maxSize);
+	har* alloc(size_t size);
+	void reset();
+	~Allocator();
 };
