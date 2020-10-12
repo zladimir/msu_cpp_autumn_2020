@@ -1,13 +1,16 @@
 #include <iostream>
 #include "allocator.h"
 
-bool check(char *p)
+void check(char *p, bool mem_should_be_alloc)
 {
-	if (p == nullptr){
-		std::cout << "WARNING:\tYou can not allocate that much memory" << std::endl;
-		return 1;
+	if (p == nullptr) {
+		if (mem_should_be_alloc) {
+			std::cout << "Incorrect behavior" << std::endl;
+		}
 	} else {
-		return 0;
+		if (!mem_should_be_alloc) {
+			std::cout << "Incorrect behavior" << std::endl;
+		}
 	}
 }
 
@@ -18,7 +21,7 @@ void test_1()
 	Allocator a;
 	a.makeAllocator(100);
 	ptr = a.alloc(100);
-	check(ptr);
+	check(ptr, true);
 }
 
 void test_2()
@@ -28,11 +31,11 @@ void test_2()
 	Allocator a;
 	a.makeAllocator(10);
 	ptr = a.alloc(3);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(2);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(5);
-	check(ptr);
+	check(ptr, true);
 }
 
 void test_3()
@@ -42,16 +45,16 @@ void test_3()
 	Allocator a;
 	a.makeAllocator(5);
 	ptr = a.alloc(3);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(2);
-	check(ptr);
+	check(ptr, true);
 	a.reset();
 	ptr = a.alloc(2);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(1);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(2);
-	check(ptr);
+	check(ptr, true);
 }
 
 void test_4()
@@ -61,18 +64,18 @@ void test_4()
 	Allocator a;
 	a.makeAllocator(100);
 	ptr = a.alloc(60);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(25);
-	check(ptr);
+	check(ptr, true);
 	a.reset();
 	ptr = a.alloc(45);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(45);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(5);
-	check(ptr);
+	check(ptr, true);
 	ptr = a.alloc(50);
-	check(ptr);
+	check(ptr, false);
 }
 
 void test_5()
@@ -89,10 +92,10 @@ void test_6()
 	Allocator a;
 	a.makeAllocator(60);
 	ptr = a.alloc(45);
-	check(ptr);
+	check(ptr, true);
 	a.makeAllocator(120);
 	ptr = a.alloc(15);
-	check(ptr);
+	check(ptr, true);
 }
 
 int main(int argc, char const *argv[])

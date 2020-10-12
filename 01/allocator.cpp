@@ -18,7 +18,7 @@ void Allocator::makeAllocator(size_t maxSize)
 			available_size_ = maxSize;
 			offset_ = memory_begin_;
 		} 
-		catch(std::bad_alloc &e) {
+		catch(const std::bad_alloc &e) {
 			std::cout << "ERROR:  \t" << e.what() << std::endl;
 		}
 	} else {
