@@ -2,13 +2,14 @@
 #include <string>
 #include <cassert>
 #include "token_parser.h"
+#include <functional>
 
 int DoubleCountingDigitHandler(std::string &digit)
 {
 	return 2;
 }
 
-int DoubleCountingStringHandler(std::string &digit)
+int DoubleCountingStringHandler(std::string &string)
 {
 	return 2;
 }

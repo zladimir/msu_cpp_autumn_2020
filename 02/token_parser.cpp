@@ -1,5 +1,6 @@
 #include "token_parser.h"
 #include <iostream>
+#include <cctype>
 
 int DefaultDigitHandler(std::string &digit)
 {
@@ -43,39 +44,42 @@ void TokenParser::SetStringTokenCallback(token_handler_ptr custom_string_handler
 	StringHandler_ = custom_string_handler;
 }
 
+void TokenParser::ChooseTokenHandler(std::string &token, token_handler_ptr Digit_H, token_handler_ptr String_H,
+									bool digit, int &digit_count, int &string_count)
+{
+	if (digit) {
+		digit_count += Digit_H(token);
+	} else {
+		string_count += String_H(token);
+	}
+}
+
 void TokenParser::TextParser(const std::string &text, int &digit_count, int &string_count){
 	StartHandler_();
 	digit_count = 0;
 	string_count = 0;
 	std::string cur_token;
 	bool digit = true;
-	int symbol = text[0];
-	for (unsigned int i = 1; i <= text.length(); ++i)
+	int symbol;
+	for (unsigned int i = 0; i < text.length(); ++i)
 	{
+		symbol = text[i];
 		if (isspace(symbol)) {
 			if (!cur_token.empty()) {
-				if (digit) {
-					digit_count += DigitHandler_(cur_token);
-				} else {
-					string_count += StringHandler_(cur_token);
-				}
+				ChooseTokenHandler(cur_token, DigitHandler_, StringHandler_, digit,
+									digit_count, string_count);
 				cur_token.clear();
 				digit = true;
 			}
 		} else {
-			if (!((symbol >= '0') && (symbol <= '9'))) {
+			if (!isdigit(symbol)) {
 				digit = false;
 			}
 			cur_token += symbol;
 		}
-		symbol = text[i];
 	}
 	if (!cur_token.empty()){
-		if (digit) {
-			digit_count += DigitHandler_(cur_token);
-		} else {
-			string_count += StringHandler_(cur_token);
-		}
+		ChooseTokenHandler(cur_token, DigitHandler_, StringHandler_, digit, digit_count, string_count);
 	}
 	EndHandler_();
 }

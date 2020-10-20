@@ -1,7 +1,10 @@
-#include <iostream>
+#pragma once
 
-using token_handler_ptr = int(*)(std::string &);
-using handler_ptr = void(*)();
+#include <iostream>
+#include <functional>
+
+using token_handler_ptr = std::function<int (std::string &)>;
+using handler_ptr = std::function<void ()>;
 
 int DefaultDigitHandler(std::string &);
 int DefaultStringHandler(std::string &);
@@ -18,5 +21,7 @@ public:
 	void SetEndCallback(handler_ptr);
 	void SetDigitTokenCallback(token_handler_ptr);
 	void SetStringTokenCallback(token_handler_ptr);
+	void ChooseTokenHandler(std::string &, token_handler_ptr, token_handler_ptr,
+							bool, int &, int &);
 	void TextParser(const std::string &, int &, int &);
 };
