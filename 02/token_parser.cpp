@@ -44,13 +44,12 @@ void TokenParser::SetStringTokenCallback(token_handler_ptr custom_string_handler
 	StringHandler_ = custom_string_handler;
 }
 
-void TokenParser::ChooseTokenHandler(std::string &token, token_handler_ptr Digit_H, token_handler_ptr String_H,
-									bool digit, int &digit_count, int &string_count)
+void TokenParser::ChooseTokenHandler(std::string &token, bool digit, int &digit_count, int &string_count)
 {
 	if (digit) {
-		digit_count += Digit_H(token);
+		digit_count += DigitHandler_(token);
 	} else {
-		string_count += String_H(token);
+		string_count += StringHandler_(token);
 	}
 }
 
@@ -66,8 +65,7 @@ void TokenParser::TextParser(const std::string &text, int &digit_count, int &str
 		symbol = text[i];
 		if (isspace(symbol)) {
 			if (!cur_token.empty()) {
-				ChooseTokenHandler(cur_token, DigitHandler_, StringHandler_, digit,
-									digit_count, string_count);
+				ChooseTokenHandler(cur_token, digit, digit_count, string_count);
 				cur_token.clear();
 				digit = true;
 			}
@@ -79,7 +77,7 @@ void TokenParser::TextParser(const std::string &text, int &digit_count, int &str
 		}
 	}
 	if (!cur_token.empty()){
-		ChooseTokenHandler(cur_token, DigitHandler_, StringHandler_, digit, digit_count, string_count);
+		ChooseTokenHandler(cur_token, digit, digit_count, string_count);
 	}
 	EndHandler_();
 }

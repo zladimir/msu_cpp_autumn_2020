@@ -21,7 +21,6 @@ public:
 	void SetEndCallback(handler_ptr);
 	void SetDigitTokenCallback(token_handler_ptr);
 	void SetStringTokenCallback(token_handler_ptr);
-	void ChooseTokenHandler(std::string &, token_handler_ptr, token_handler_ptr,
-							bool, int &, int &);
+	void ChooseTokenHandler(std::string &, bool, int &, int &);
 	void TextParser(const std::string &, int &, int &);
 };
