@@ -29,7 +29,7 @@ public:
 	Proxy operator[](size_t r);
 	Proxy operator[](size_t r) const;
 	Matrix &operator*=(int64_t number);
-	Matrix operator+(const Matrix &B);
+	Matrix operator+(const Matrix &B) const;
 	friend std::ostream &operator<<(std::ostream &out, const Matrix &A);
 	~Matrix();
 };

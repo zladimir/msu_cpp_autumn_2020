@@ -33,10 +33,13 @@ Matrix::Matrix(const Matrix &other)
 
 Matrix &Matrix::operator=(const Matrix &other)
 {
-	if (this == &other)
-            return *this;
-	row = other.row;
-	column = other.column;
+	if (this == &other) {
+		return *this;
+	}
+	if ((row != other.row) || (column != other.column)) {
+		std::cerr << "The matrices must be the same size" << std::endl;
+		return *this;
+	}
 	for (size_t i = 0; i < row; ++i) {
 		for (size_t j = 0; j < column; ++j) {
 			matrix[i][j] = other[i][j];
@@ -59,23 +62,22 @@ bool Matrix::operator==(const Matrix &B) const
 {
 	if ((row != B.row) || (column != B.column)) {
 		return false;
-	} else {
-		for (size_t i = 0; i < row; ++i) {
-			for (size_t j = 0; j < column; ++j) {
-				if (B[i][j] != (*this)[i][j]) {
-					return false;
-				}
+	}
+	for (size_t i = 0; i < row; ++i) {
+		for (size_t j = 0; j < column; ++j) {
+			if (B[i][j] != matrix[i][j]) {
+				return false;
 			}
 		}
-		return true;
 	}
+	return true;
 }
 
 Matrix &Matrix::operator*=(int64_t number)
 {
 	for (size_t i = 0; i < row; ++i) {
 		for (size_t j = 0; j < column; ++j) {
-			(*this)[i][j] *= number;
+			matrix[i][j] *= number;
 		}
 	}
 	return *this;
@@ -103,17 +105,17 @@ Proxy Matrix::operator[](size_t r) const
 	return Proxy(matrix[r], column);
 }
 
-Matrix Matrix::operator+(const Matrix &B)
+Matrix Matrix::operator+(const Matrix &B) const
 {
 	Matrix res(B.row, B.column);
-	if ((B.row == this->row) && (B.column == this->column)) {
+	if ((B.row == row) && (B.column == column)) {
 		for (size_t i = 0; i < B.row; ++i)	{
 			for (size_t j = 0; j < B.column; ++j) {
-				res[i][j] = (*this)[i][j] + B[i][j];
+				res[i][j] = matrix[i][j] + B[i][j];
 			}
 		}
 	} else {
-		std::cout << "Matrix addition is not possible" << std::endl;
+		std::cerr << "Matrix addition is not possible" << std::endl;
 	}
 	return res;
 }
