@@ -48,10 +48,11 @@ BigInt::BigInt(const std::string &s)
 				}
 			}
 		}
-		if ((part != 0) || (j > 0)) {
+		if ((part != 0) || (j > 0) || (*this == 0)) {
 			number.push_back(part);
 		}
 	}
+	insignificant_zeros();
 }
 
 BigInt::BigInt(const BigInt &other){

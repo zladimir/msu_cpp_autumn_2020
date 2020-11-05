@@ -5,7 +5,7 @@
 struct Node
 {
 	int32_t data;
-	class Node *next;
+	Node *next;
 };
 
 class List

@@ -20,9 +20,15 @@ List::List(int32_t number)
 List::List(const List &other)
 {
 	Node *tmp = other.begin;
-	while (tmp) {
-		this->push_back(tmp->data);
-		tmp = tmp->next;
+	if (!tmp) {
+		size = 0;
+		begin = nullptr;
+		end = nullptr;
+	} else {
+		while (tmp) {
+			this->push_back(tmp->data);
+			tmp = tmp->next;
+		}
 	}
 }
 
@@ -120,9 +126,11 @@ List &List::operator=(const List &other)
 		return *this;
 	}
 	this->clear();
-	begin = other.begin;
-	end = other.end;
-	size = other.size;
+	Node *tmp = other.begin;
+	while (tmp) {
+		this->push_back(tmp->data);
+		tmp = tmp->next;
+	}
 	return *this;
 }
 

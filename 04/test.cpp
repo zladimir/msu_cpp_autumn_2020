@@ -59,12 +59,22 @@ void test4()
 	assert(-e*e == -g);
 }
 
+void test5() {
+	BigInt a(0);
+	std::cout << a << std::endl;
+	BigInt b("0");
+	std::cout << b << std::endl;
+	BigInt c("135435184351313813184354843");
+	std::cout << c-c << std::endl;
+}
+
 int main(int argc, char const *argv[])
 {
 	test1();
 	test2();
 	test3();
 	test4();
+	test5();
 	std::cout << "success" << std::endl;
 
 	return 0;
