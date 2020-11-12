@@ -12,17 +12,17 @@ class Serializer
     static constexpr char separator = ' ';
     std::ostream& out;
     template <class T>
-    Error process(const T& val);
+    Error process(T val);
     template <class T, class... ArgsT>
-    Error process(const T& val, const ArgsT&... args);
-    Error out_one(const uint64_t& num) const;
-    Error out_one(const bool& b) const;
+    Error process(T val, ArgsT... args);
+    Error out_one(uint64_t num) const;
+    Error out_one(bool b) const;
 public: 
     explicit Serializer(std::ostream& out) : out(out){}
     template <class T>
     Error save(T& object);
     template <class... ArgsT>
-    Error operator()(const ArgsT& ... args);
+    Error operator()(ArgsT ... args);
 };
 
 class Deserializer
@@ -44,13 +44,13 @@ public:
 
 
 template <class T>
-Error Serializer::process(const T& val)
+Error Serializer::process(T val)
 {
     return out_one(val);
 }
 
 template <class T, class... ArgsT>
-Error Serializer::process(const T& val, const ArgsT&... args)
+Error Serializer::process(T val, ArgsT... args)
 {
     const Error err = out_one(val);
     if (err == Error::NoError)
@@ -58,13 +58,13 @@ Error Serializer::process(const T& val, const ArgsT&... args)
     return err;
 }
 
-Error Serializer::out_one(const uint64_t& num) const
+Error Serializer::out_one(uint64_t num) const
 {
     out << num << separator;
     return Error::NoError;
 }
 
-Error Serializer::out_one(const bool& b) const
+Error Serializer::out_one(bool b) const
 {
     std :: string text;
     if (b == true)
@@ -82,7 +82,7 @@ Error Serializer::save(T& object)
 }
 
 template <class... ArgsT>
-Error Serializer::operator()(const ArgsT& ... args)
+Error Serializer::operator()(ArgsT ... args)
 {
     return process(args...);
 }
@@ -124,7 +124,7 @@ Error Deserializer::in_one(uint64_t& num) const
         num = std::stoull(text);
         return Error::NoError;
     }
-    catch(std::invalid_argument)
+    catch(const std::logic_error &)
     {
         return Error::CorruptedArchive;
     }
