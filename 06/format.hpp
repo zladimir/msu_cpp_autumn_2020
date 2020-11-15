@@ -31,7 +31,7 @@ public:
 
 
 template<class T>
-void process(parametr_vector &params, T val)
+void process(parametr_vector &params, const T& val)
 {
     std::ostringstream ss;
     ss << val;
@@ -39,14 +39,14 @@ void process(parametr_vector &params, T val)
 }
 
 template<class T, class... ArgsT>
-void process(parametr_vector &params, T val, ArgsT... args)
+void process(parametr_vector &params, const T& val, const ArgsT&... args)
 {
     process(params, val);
     process(params, args...);
 }
 
 template<class... ArgsT>
-std::string format(const std::string& s, ArgsT... args)
+std::string format(const std::string& s, const ArgsT&... args)
 {
     parametr_vector params;
     process(params, args...);
@@ -87,6 +87,9 @@ std::string format(const std::string& s, ArgsT... args)
                 result.push_back(symbol);
             }
         }
+    }
+    if (assembly_arg) {
+        throw InvalidString("The closing symbol wasn\'t found");
     }
     return result;
 }

@@ -70,6 +70,17 @@ void test6()
     }
 }
 
+void test7()
+{
+    try {
+        auto text = format("{1}+{1} = {0", 2, "one");
+    }
+    catch(const InvalidString& e) {
+        std::string expected("The closing symbol wasn\'t found");
+        assert(expected == e.what());
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     test1();
@@ -78,6 +89,7 @@ int main(int argc, char const *argv[])
     test4();
     test5();
     test6();
+    test7();
     std::cout << "Success" << std::endl;
     return 0;
 }
