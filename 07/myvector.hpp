@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <new>
 
@@ -140,7 +141,7 @@ public:
     template<class... ArgsT>
     void emplace_back(ArgsT&&... args)
     {
-        push_back(std::move(T(args...)));
+        push_back(T(args...));
     }
     Iterator<T> begin() noexcept
     {
