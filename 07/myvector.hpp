@@ -7,23 +7,28 @@ class Allocator
 {
 public:
     Allocator() = default;
+
     T* allocate(size_t n)
     {
         return static_cast<T*>(operator new(n*sizeof(T)));
     }
+
     void deallocate(T* ptr, size_t n)
     {
         operator delete(ptr, n*sizeof(T));
     }
+
     template<class... Args>
     void construct(T* ptr, Args&&... args)
     {
         new(ptr) T(std::forward<Args>(args)...);
     }
+
     void destroy(T* ptr) noexcept
     {
         ptr->~T();
     }
+
     ~Allocator() = default;
 };
 
@@ -38,6 +43,7 @@ public:
         ptr_ = ptr;
         reverse_ = reverse;
     }
+
     Iterator& operator++()
     {
         if (reverse_) {
@@ -47,6 +53,7 @@ public:
         }
         return *this;
     }
+
     Iterator& operator--()
     {
         if (reverse_) {
@@ -56,6 +63,7 @@ public:
         }
         return *this;
     }
+
     Iterator operator+(size_t n)
     {
         if (reverse_) {
@@ -64,6 +72,7 @@ public:
             return Iterator(ptr_ + n);
         }
     }
+
     Iterator operator-(size_t n)
     {
         if (reverse_) {
@@ -72,14 +81,17 @@ public:
             return Iterator(ptr_ - n);
         }
     }
+
     bool operator==(const Iterator<T>& other) const
     {
         return ptr_ == other.ptr_;
     }
+
     bool operator!=(const Iterator<T>& other) const
     {
         return !(*this == other);
     }
+
     T& operator*() const
     {
         return *ptr_;
@@ -100,14 +112,68 @@ public:
         size_ = 0;
         capacity_ = count;
     }
+
+    vector(const vector& other)
+    {
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        ptr_ = alloc_.allocate(capacity_);
+        for (size_t i = 0; i < size_; ++i) {
+            alloc_.construct(ptr_ + i, other[i]);
+        }
+    }
+
+    vector(vector&& other)
+    {
+        size_ = std::move(other.size_);
+        capacity_ = std::move(other.capacity_);
+        ptr_ = std::move(other.ptr_);
+        other.ptr_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+    }
+
+    vector& operator=(const vector& other)
+    {
+        if (this == &other) {
+            return *this;
+        }
+        clear();
+        alloc_.deallocate(ptr_, capacity_);
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        ptr_ = alloc_.allocate(capacity_);
+        for (size_t i = 0; i < size_; ++i) {
+            alloc_.construct(ptr_ + i, other[i]);
+        }
+        return *this;
+    }
+
+    vector& operator=(vector&& other){
+        if (this == &other) {
+            return *this;
+        }
+        clear();
+        alloc_.deallocate(ptr_, capacity_);
+        size_ = std::move(other.size_);
+        capacity_ = std::move(other.capacity_);
+        ptr_ = std::move(other.ptr_);
+        other.ptr_ = nullptr;
+        other.size_ = 0;
+        other.capacity_ = 0;
+        return *this;
+    }
+
     T& operator[](size_t i)
     {
         return ptr_[i];
     }
+
     const T& operator[](size_t i) const
     {
         return ptr_[i];
     }
+
     void push_back(const T& value){
         if (size_ == capacity_) {
             if (capacity_ == 0){
@@ -119,6 +185,7 @@ public:
         alloc_.construct(ptr_ + size_, value);
         size_++;
     }
+
     void push_back(T&& value)
     {
         if (size_ == capacity_) {
@@ -131,6 +198,7 @@ public:
         alloc_.construct(ptr_ + size_, value);
         size_++;
     }
+
     void pop_back()
     {
         if (size_ > 0) {
@@ -138,32 +206,38 @@ public:
             alloc_.destroy(ptr_ + size_);
         }
     }
+
     template<class... ArgsT>
     void emplace_back(ArgsT&&... args)
     {
-        push_back(T(args...));
+        push_back(std::move(T(std::forward<ArgsT>(args)...)));
     }
+
     Iterator<T> begin() noexcept
     {
         return Iterator<T>(ptr_);
     }
+
     Iterator<T> rbegin() noexcept
     {
         return Iterator<T>(ptr_ + size_ - 1, true);
     }
+
     Iterator<T> end() noexcept
     {
         return Iterator<T>(ptr_ + size_);
     }
+
     Iterator<T> rend() noexcept
     {
         return Iterator<T>(ptr_ - 1, true);
     }
+
     void reserve(size_t n){
         if (n > capacity_) {
             T* new_ptr = alloc_.allocate(n);
             for (size_t i = 0; i < size_; i++) {
-                alloc_.construct(new_ptr + i, ptr_[i]);
+                alloc_.construct(new_ptr + i, std::move(ptr_[i]));
                 alloc_.destroy(ptr_ + i);
             }
             alloc_.deallocate(ptr_, size_);
@@ -171,6 +245,7 @@ public:
             capacity_ = n;
         }
     }
+
     void resize(size_t n)
     {
         if (n < size_) {
@@ -181,23 +256,27 @@ public:
         if (n > size_) {
             reserve(n);
             for (size_t i = size_; i < n; ++i) {
-                alloc_.construct(ptr_ + i, T());
+                alloc_.construct(ptr_ + i, std::move(T()));
             }
         }
         size_ = n;
     }
+
     size_t capacity() const noexcept
     {
         return capacity_;
     }
+
     size_t size() const noexcept
     {
         return size_;
     }
+
     bool empty() const noexcept
     {
         return size_ == 0;
     }
+
     void clear() noexcept
     {
         for (size_t i = 0; i < size_; ++i) {
@@ -205,6 +284,7 @@ public:
         }
         size_ = 0;
     }
+
     ~vector()
     {
         for (size_t i = 0; i < size_; ++i) {

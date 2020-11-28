@@ -1,14 +1,7 @@
 #include <iostream>
+#include <string>
 #include "myvector.hpp"
 #include <cassert>
-
-struct tricky
-{
-    int number;
-    std::string str;
-    tricky(int n, std::string s): number(n), str(std::move(s)) {}
-    ~tricky() = default;
-};
 
 void test1()
 {
@@ -48,13 +41,30 @@ void test2()
 
 void test3()
 {
-    vector<tricky> v;
-    v.emplace_back(1, "a");
-    v.emplace_back(2, "bb");
-    v.emplace_back(3, "ccc");
+    vector<std::string> v;
+    v.emplace_back("abc", 2);
+    v.emplace_back("def", 3);
+    v.emplace_back("jh", 1);
     v.pop_back();
-    v.emplace_back(4, "d");
+    v.emplace_back("qwerty", 6);
     assert(v.size() == 3);
+}
+
+void test4()
+{
+    vector<int> v;
+    for (int i = 0; i < 16; ++i) {
+        v.push_back(i);
+    }
+    vector<int> w = std::move(v);
+    vector<int> z;
+    for (int i = 0; i < 16; ++i) {
+        z.push_back(i-16);
+    }
+    z = w;
+    for (size_t i = 0; i < z.size(); ++i) {
+        assert(z[i] == w[i]);
+    }
 }
 
 int main()
@@ -62,6 +72,7 @@ int main()
     test1();
     test2();
     test3();
+    test4();
     std::cout << "Success" << std::endl;
     return 0;
 }
